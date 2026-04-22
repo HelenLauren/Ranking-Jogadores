@@ -1,5 +1,5 @@
 public class BinarySearchTree {
-    Node root;
+    private Node root;
 
     public void insert(Player j) {
         root = insert(root, j);
