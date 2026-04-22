@@ -1,6 +1,8 @@
 # Ranking-Jogadores
 PBL 02 - Resolução de Problemas Estruturados. Sistema simples de ranking de jogadores utilizando uma Árvore Binária de Busca (ABB) não balanceada.
 
+### Equipe: Helen Lauren e Raissa Queiroz
+
 Cada jogador possui, no mínimo:
 - nickname (String)
 - ranking (int) — será a chave de ordenação da ABB
