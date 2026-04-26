@@ -1,76 +1,154 @@
 public class BinarySearchTree {
     private Node root;
 
-    public void insert(Player j) {
-        root = insert(root, j);
+    public BinarySearchTree() {
+        root = null;
     }
 
-    private Node insert(Node current, Player j) {
-        if (current == null) return new Node(j);
+    public Node getRoot() {
+        return root;
+    }
 
-        if (j.getRanking() < current.player.getRanking())
-            current.left = insert(current.left, j);
-        else
-            current.right = insert(current.right, j);
+    public void insert(Player player) {
+        root = insertRec(root, player);
+    }
+
+    private Node insertRec(Node current, Player player) {
+        if (current == null) {
+            return new Node(player);
+        }
+
+        if (player.getRanking() < current.getPlayer().getRanking()) {
+            current.setLeft(insertRec(current.getLeft(), player));
+        } else {
+            current.setRight(insertRec(current.getRight(), player));
+        }
 
         return current;
     }
 
-    public boolean search(String name) {
-        return search(root, name) != null;
+    public boolean search(String nickname) {
+        return searchRec(root, nickname);
     }
 
-    private Node search(Node current, String name) {
-        if (current == null) return null;
+    private boolean searchRec(Node current, String nickname) {
+        if (current == null) {
+            return false;
+        }
 
-        if (current.player.getNickname().equals(name))
-            return current;
+        if (current.getPlayer().getNickname().equalsIgnoreCase(nickname)) {
+            return true;
+        }
 
-        Node left = search(current.left, name);
-        if (left != null) return left;
-
-        return search(current.right, name);
+        return searchRec(current.getLeft(), nickname) || searchRec(current.getRight(), nickname);
     }
 
-    public Player remove(String name) {
-        Node target = search(root, name);
-        if (target == null) return null;
-        root = remove(root, target.player.getRanking());
-        return target.player;
+    public Player searchByRanking(int ranking) {
+        return searchByRankingRec(root, ranking);
     }
 
-    private Node remove(Node current, int ranking) {
-        if (current == null) return null;
+    private Player searchByRankingRec(Node current, int ranking) {
+        if (current == null) {
+            return null;
+        }
 
-        if (ranking < current.player.getRanking()) {
-            current.left = remove(current.left, ranking);
-        } else if (ranking > current.player.getRanking()) {
-            current.right = remove(current.right, ranking);
+        if (ranking == current.getPlayer().getRanking()) {
+            return current.getPlayer();
+        }
+
+        if (ranking < current.getPlayer().getRanking()) {
+            return searchByRankingRec(current.getLeft(), ranking);
+        }
+
+        return searchByRankingRec(current.getRight(), ranking);
+    }
+
+    public void remove(String nickname) {
+        Player player = findPlayer(root, nickname);
+
+        if (player != null) {
+            root = removeRec(root, player.getRanking());
         } else {
-            if (current.left == null) return current.right;
-            if (current.right == null) return current.left;
+            System.out.println("Jogador não encontrado.");
+        }
+    }
 
-            Node smallest = findMin(current.right);
-            current.player = smallest.player;
-            current.right = remove(current.right, smallest.player.getRanking());
+    private Player findPlayer(Node current, String nickname) {
+        if (current == null) {
+            return null;
+        }
+
+        if (current.getPlayer().getNickname().equalsIgnoreCase(nickname)) {
+            return current.getPlayer();
+        }
+
+        Player left = findPlayer(current.getLeft(), nickname);
+
+        if (left != null) {
+            return left;
+        }
+
+        return findPlayer(current.getRight(), nickname);
+    }
+
+    private Node removeRec(Node current, int ranking) {
+        if (current == null) {
+            return null;
+        }
+
+        if (ranking < current.getPlayer().getRanking()) {
+            current.setLeft(removeRec(current.getLeft(), ranking));
+        } else if (ranking > current.getPlayer().getRanking()) {
+            current.setRight(removeRec(current.getRight(), ranking));
+        } else {
+            if (current.getLeft() == null && current.getRight() == null) {
+                return null;
+            }
+
+            if (current.getLeft() == null) {
+                return current.getRight();
+            }
+
+            if (current.getRight() == null) {
+                return current.getLeft();
+            }
+
+            Node menor = findMin(current.getRight());
+
+            current.getPlayer().setNickname(menor.getPlayer().getNickname());
+            current.getPlayer().setRanking(menor.getPlayer().getRanking());
+
+            current.setRight(removeRec(current.getRight(), menor.getPlayer().getRanking()));
         }
 
         return current;
     }
 
     private Node findMin(Node node) {
-        return node.left == null ? node : findMin(node.left);
-    }
-
-    public void inOrder() {
-        inOrder(root);
-    }
-
-    private void inOrder(Node node) {
-        if (node != null) {
-            inOrder(node.left);
-            System.out.println(node.player.getNickname() + " - " + node.player.getRanking());
-            inOrder(node.right);
+        while (node.getLeft() != null) {
+            node = node.getLeft();
         }
+
+        return node;
+    }
+
+    public void printTree() {
+        printTreeRec(root, 0);
+    }
+
+    private void printTreeRec(Node current, int level) {
+        if (current == null) {
+            return;
+        }
+
+        printTreeRec(current.getRight(), level + 1);
+
+        for (int i = 0; i < level; i++) {
+            System.out.print("    ");
+        }
+
+        System.out.println(current.getPlayer().getNickname() + " (" + current.getPlayer().getRanking() + ")");
+
+        printTreeRec(current.getLeft(), level + 1);
     }
 }

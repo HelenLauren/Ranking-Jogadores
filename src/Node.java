@@ -1,9 +1,31 @@
 public class Node {
-    Player player;
-    Node left;
-    Node right;
+    private Player player;
+    private Node left;
+    private Node right;
 
     public Node(Player player) {
         this.player = player;
+        this.left = null;
+        this.right = null;
+    }
+
+    public Player getPlayer() {
+        return player;
+    }
+
+    public Node getLeft() {
+        return left;
+    }
+
+    public Node getRight() {
+        return right;
+    }
+
+    public void setLeft(Node left) {
+        this.left = left;
+    }
+
+    public void setRight(Node right) {
+        this.right = right;
     }
 }
